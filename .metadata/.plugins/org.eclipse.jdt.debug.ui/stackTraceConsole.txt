@@ -1,0 +1,2 @@
+@GetMapping("/publications/{id}")
+	public PublicationBean findPublicationById(@PathVariable(name = "id") Long id);

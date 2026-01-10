@@ -1,0 +1,55 @@
+package tn.enis.membre_service.services;
+
+import java.util.List;
+
+import tn.enis.membre_service.beans.EvenementBean;
+import tn.enis.membre_service.beans.OutilBean;
+import tn.enis.membre_service.beans.PublicationBean;
+import tn.enis.membre_service.entities.EnseignantChercheur;
+import tn.enis.membre_service.entities.Etudiant;
+import tn.enis.membre_service.entities.Membre;
+
+public interface IMembreService {
+	// Crud sur les membres
+	public Membre addMember(Membre m);
+
+	public void deleteMember(Long id);
+
+	public Membre updateMember(Membre p);
+
+	public Membre findMember(Long id);
+
+	public List<Membre> findAll();
+
+	// Filtrage par propriété
+	public Membre findByCin(String cin);
+
+	public Membre findByEmail(String email);
+
+	public List<Membre> findByNom(String nom);
+
+	// recherche spécifique des étudiants
+	public List<Etudiant> findByDiplome(String diplome);
+
+	// recherche spécifique des enseignants
+	public List<EnseignantChercheur> findByGrade(String grade);
+
+	public List<EnseignantChercheur> findByEtablissement(String etablissement);
+
+	public void assignEtudiantToEnseignant(long idEtud, long idEns);
+	
+	public void assignAuteurToPublication(Long idAuteur, Long idPub);
+	
+	public List<PublicationBean> findPublicationsByAuteur(Long idAuteur);
+	
+	public void assignCreateurToOutil(Long idCreateur, Long idOutil);
+	
+	public List<OutilBean> findOutilsByCreateur(Long idOutil);
+	
+	public void assignOrganisateurToEvenement(Long idOrganisateur, Long idEvnt);
+	
+	public List<EvenementBean> findEvenementsByOrganisateur(Long idEvnt);
+	
+
+
+}

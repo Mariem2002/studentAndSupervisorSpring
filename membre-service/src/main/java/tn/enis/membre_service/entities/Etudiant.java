@@ -1,0 +1,68 @@
+package tn.enis.membre_service.entities;
+
+import java.util.Date;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
+
+@RequiredArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Getter @Setter
+@Entity
+@DiscriminatorValue("etd")
+public class Etudiant extends Membre {
+
+    @ManyToOne
+    EnseignantChercheur encadrant;
+
+    @NonNull
+    String diplome;
+
+    @NonNull
+    String sujet;
+
+    @JsonProperty("encadrantId")
+    public void setEncadrantId(Long encadrantId) {
+        if (encadrantId != null) {
+            this.encadrant = new EnseignantChercheur();
+            this.encadrant.setId(encadrantId);
+        } else {
+            this.encadrant = null;
+        }
+    }
+
+
+    @Builder
+    public Etudiant(
+        String cin,
+        String nom,
+        String prenom,
+        Date dateNaissance,
+        String cv,
+        String email,
+        String password,
+        Date dateInscription,
+        String sujet,
+        String diplome,
+        EnseignantChercheur encadrant,
+        String etablissement
+    ) {
+        super(cin, nom, prenom, dateNaissance, cv, email, password, dateInscription, etablissement);
+        this.sujet = sujet;
+        this.diplome = diplome;
+        this.encadrant = encadrant;
+    }
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename package &apos;tn.enis.membre_service&apos; to &apos;tn.enis.outil_service&apos;&#x0D;&#x0A;- Original project: &apos;outil-service&apos;&#x0D;&#x0A;- Original element: &apos;outil-service/src/main/java/tn.enis.membre_service&apos;&#x0D;&#x0A;- Renamed element: &apos;outil-service/src/main/java/tn.enis.outil_service&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;tn.enis.membre_service&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;tn.enis.membre_service" name="tn.enis.outil_service" qualified="false" references="true" stamp="1758963320062" textual="false" version="1.0"/>
+</session>
