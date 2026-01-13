@@ -2,7 +2,9 @@ package tn.enis.outil_service.services;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import lombok.AllArgsConstructor;
 import tn.enis.outil_service.entities.Outil;
@@ -20,7 +22,11 @@ public class OutilImpl implements IOutilService{
 
 	
 	public void deleteOutil(Long id) {
-		// TODO Auto-generated method stub
+		  if (!outilRepository.existsById(id)) {
+	            throw new ResponseStatusException(
+	                HttpStatus.NOT_FOUND, "Outil not found"
+	            );
+	        }
 		outilRepository.deleteById(id);
 	}
 

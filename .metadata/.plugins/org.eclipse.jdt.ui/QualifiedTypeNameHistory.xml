@@ -7,4 +7,5 @@
     <fullyQualifiedTypeName name="tn.enis.evenement_service.entities.Evenement"/>
     <fullyQualifiedTypeName name="tn.enis.outil_service.entities.Outil"/>
     <fullyQualifiedTypeName name="java.lang.System"/>
+    <fullyQualifiedTypeName name="lombok.Data"/>
 </qualifiedTypeNameHistroy>

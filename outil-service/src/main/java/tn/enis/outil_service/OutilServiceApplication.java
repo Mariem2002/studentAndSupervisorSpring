@@ -15,22 +15,12 @@ import tn.enis.outil_service.repository.IOutilRepository;
 @SpringBootApplication
 @EnableDiscoveryClient
 @AllArgsConstructor
-public class OutilServiceApplication implements CommandLineRunner{
+public class OutilServiceApplication{
 	IOutilRepository outilRepository;
 	RepositoryRestConfiguration configuration;
 	public static void main(String[] args) {
 		SpringApplication.run(OutilServiceApplication.class, args);
 	}
 
-	@Override
-	public void run(String... args) throws Exception {
-		// TODO Auto-generated method stub
-		configuration.exposeIdsFor(Outil.class);
-		Outil outil1 = Outil.builder()
-				.dateCreation(new Date())
-				.source("www.wikipedia.com")
-				.build();
-		outilRepository.save(outil1);
-	}
 
 }

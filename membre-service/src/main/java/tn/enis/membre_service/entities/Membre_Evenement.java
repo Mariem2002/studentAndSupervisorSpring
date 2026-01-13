@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class Membre_Evenement {
 	@EmbeddedId
 	private Membre_Evnt_Id id;
-	@ManyToOne @MapsId("organisateur_id")
+	@ManyToOne @MapsId("organisateurId")
 	private Membre organisateur;
 }

@@ -1,0 +1,226 @@
+package tn.enis.membre_service.services;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import tn.enis.membre_service.beans.EvenementBean;
+import tn.enis.membre_service.beans.OutilBean;
+import tn.enis.membre_service.beans.PublicationBean;
+import tn.enis.membre_service.dao.MembreEvntRepository;
+import tn.enis.membre_service.dao.MembreOutilRepository;
+import tn.enis.membre_service.dao.MembrePubRepository;
+import tn.enis.membre_service.dao.MembreRepository;
+import tn.enis.membre_service.entities.EnseignantChercheur;
+import tn.enis.membre_service.entities.Etudiant;
+import tn.enis.membre_service.entities.Membre;
+import tn.enis.membre_service.entities.Membre_Evenement;
+import tn.enis.membre_service.entities.Membre_Evnt_Id;
+import tn.enis.membre_service.entities.Membre_Outil;
+import tn.enis.membre_service.entities.Membre_Outil_Id;
+import tn.enis.membre_service.entities.Membre_Pub_Id;
+import tn.enis.membre_service.entities.Membre_Publication;
+import tn.enis.membre_service.proxies.EvenementProxyService;
+import tn.enis.membre_service.proxies.OutilProxyService;
+import tn.enis.membre_service.proxies.PublicationProxyService;
+
+@Service
+@AllArgsConstructor
+public class MembreImpl implements IMembreService {
+	MembreRepository membreRepository;
+	MembrePubRepository membrePubRepository;
+	MembreOutilRepository membreOutilRepository;
+	MembreEvntRepository membreEvntRepository;
+	PublicationProxyService publicationProxyService;
+	OutilProxyService outilProxyService;
+	EvenementProxyService evenementProxyService;
+	@Override
+	public Membre addMember(Membre m) {
+		// TODO Auto-generated method stub
+		return membreRepository.save(m);
+	}
+
+	@Override
+	public void deleteMember(Long id) {
+		// TODO Auto-generated method stub
+		membreRepository.deleteById(id);
+	}
+
+	@Override
+	public Membre updateMember(Membre p) {
+		// TODO Auto-generated method stub
+		return membreRepository.saveAndFlush(p);
+	}
+
+	@Override
+	public Membre findMember(Long id) {
+		// TODO Auto-generated method stub
+		return membreRepository.findById(id).get(); // alesh find w get mabaadhhom ?
+	}
+
+	@Override
+	public List<Membre> findAll() {
+		// TODO Auto-generated method stub
+		return membreRepository.findAll();
+	}
+
+	@Override
+	public Membre findByCin(String cin) {
+		// TODO Auto-generated method stub
+		return membreRepository.findByCin(cin);
+	}
+
+	@Override
+	public Membre findByEmail(String email) {
+		// TODO Auto-generated method stub
+		return membreRepository.findByEmail(email);
+	}
+
+	@Override
+	public List<Membre> findByNom(String nom) {
+		// TODO Auto-generated method stub
+		return membreRepository.findByNom(nom);
+	}
+
+	@Override
+	public List<Etudiant> findByDiplome(String diplome) {
+		// TODO Auto-generated method stub
+		return membreRepository.findByDiplome(diplome);
+	}
+
+	@Override
+	public List<EnseignantChercheur> findByGrade(String grade) {
+		// TODO Auto-generated method stub
+		return membreRepository.findByGrade(grade);
+	}
+
+	@Override
+	public List<EnseignantChercheur> findByEtablissement(String etablissement) {
+		// TODO Auto-generated method stub
+		return membreRepository.findByEtablissement(etablissement);
+	}
+
+	@Override
+	public void assignEtudiantToEnseignant(long idEtud, long idEns) {
+		// TODO Auto-generated method stub
+		Etudiant etd1 = (Etudiant) membreRepository.findById(idEtud).get();
+		EnseignantChercheur ens1 = (EnseignantChercheur) membreRepository.findById(idEns).get();
+		etd1.setEncadrant(ens1);
+	}
+
+	public void assignAuteurToPublication(Long idAuteur, Long idPub) {
+		Membre mbr = membreRepository.findById(idAuteur).get();
+		Membre_Publication mbs = new Membre_Publication();
+		mbs.setAuteur(mbr);
+		mbs.setId(new Membre_Pub_Id(idPub, idAuteur));
+		membrePubRepository.save(mbs);
+	}
+
+	@Override
+	public List<PublicationBean> findPublicationsByAuteur(Long idAuteur) {
+	    List<PublicationBean> publications = new ArrayList<>();
+	    List<Membre_Publication> idpublications = membrePubRepository.findpubId(idAuteur);
+
+	    idpublications.forEach(s -> {
+	        Long publicationId = s.getId().getPublication_id();
+	        try {
+	        	PublicationBean publication = publicationProxyService.findPublicationById(publicationId);
+	        	publications.add(publication);
+	        } catch (feign.FeignException.NotFound e) {
+	            // Publication missing, skip it
+	            System.out.println("Publication with ID " + publicationId + " not found, skipping.");
+	        }
+	    });
+
+	    return publications;
+	}
+
+
+
+	
+	@Override
+	public void assignCreateurToOutil(Long idCreateur, Long idOutil) {
+		// TODO Auto-generated method stub
+		Membre mbr = membreRepository.findById(idCreateur).get();
+		Membre_Outil mbs = new Membre_Outil();
+		mbs.setCreateur(mbr);
+		mbs.setId(new Membre_Outil_Id(idOutil, idCreateur));
+		membreOutilRepository.save(mbs);
+		
+	}
+	
+	
+	@Transactional
+	public void unassignCreateurFromOutil(Long idCreateur, Long idOutil) {
+	    // Cherche le lien entre le membre et l'outil
+	    Optional<Membre_Outil> optionalMo = membreOutilRepository.findByMembreIdAndOutilId(idCreateur, idOutil);
+
+	    if (optionalMo.isPresent()) {
+	        // Supprime le lien
+	        membreOutilRepository.delete(optionalMo.get());
+	    } else {
+	        // Si aucun lien trouvé, tu peux loguer ou lancer une exception
+	        System.out.println("No link found between member " + idCreateur + " and outil " + idOutil);
+	        // ou throw new EntityNotFoundException(...)
+	    }
+	}
+
+
+	@Override
+	public List<OutilBean> findOutilsByCreateur(Long idCreateur) {
+	    List<OutilBean> outils = new ArrayList<>();
+	    List<Membre_Outil> idoutils = membreOutilRepository.findoutilId(idCreateur);
+
+	    idoutils.forEach(s -> {
+	        Long outilId = s.getId().getOutilId();
+	        try {
+	        	OutilBean outil = outilProxyService.findOutilById(outilId);
+	            outils.add(outil);
+	        } catch (feign.FeignException.NotFound e) {
+	            // Outil missing, skip it
+	            System.out.println("Outil with ID " + outilId + " not found, skipping.");
+	        }
+	    });
+
+	    return outils;
+	}
+
+	
+	@Override
+	public void assignOrganisateurToEvenement(Long idOrganisateur, Long idEvnt) {
+		// TODO Auto-generated method stub
+		Membre mbr = membreRepository.findById(idOrganisateur).get();
+		Membre_Evenement mbs = new Membre_Evenement();
+		mbs.setOrganisateur(mbr);
+		mbs.setId(new Membre_Evnt_Id(idEvnt, idOrganisateur));
+		membreEvntRepository.save(mbs);
+	}
+
+	@Override
+	public List<EvenementBean> findEvenementsByOrganisateur(Long idOrganisateur) {
+	    List<EvenementBean> events = new ArrayList<>();
+	    List<Membre_Evenement> idevents = membreEvntRepository.findevenementId(idOrganisateur);
+
+	    idevents.forEach(s -> {
+	        Long eventId = s.getId().getEvenementId();
+	        try {
+	            EvenementBean event = evenementProxyService.findEvenementById(eventId);
+	            events.add(event);
+	        } catch (feign.FeignException.NotFound e) {
+	            // Event missing, skip it
+	            System.out.println("Event with ID " + eventId + " not found, skipping.");
+	        }
+	    });
+
+	    return events;
+	}
+
+
+
+
+
+}

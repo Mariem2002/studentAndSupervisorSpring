@@ -21,4 +21,6 @@ List<Membre> findByNom(String nom);
 List<Etudiant> findByDiplome(String diplome);
 List<EnseignantChercheur> findByGrade(String grade);
 List<EnseignantChercheur> findByEtablissement(String etablissement);
+
+
 }

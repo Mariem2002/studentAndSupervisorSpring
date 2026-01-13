@@ -1,6 +1,7 @@
 package tn.enis.membre_service.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import feign.Param;
 import tn.enis.membre_service.entities.Membre_Outil;
 import tn.enis.membre_service.entities.Membre_Outil_Id;
+import tn.enis.membre_service.entities.Membre_Publication;
 
 
 
@@ -15,5 +17,11 @@ import tn.enis.membre_service.entities.Membre_Outil_Id;
 public interface MembreOutilRepository  extends JpaRepository<Membre_Outil, Membre_Outil_Id> {
 	@Query("select m from Membre_Outil m where m.id.createurId = :creatId")
 	List<Membre_Outil> findoutilId(@Param("creatId") Long creatId);
+
+	Membre_Outil findById_OutilId(Long pubId);
+
+	@Query("SELECT mp FROM Membre_Outil mp WHERE mp.id.outilId = :outilId")
+    Membre_Outil findByOutilId(@Param("outilId") Long outilId);
+	
 
 }

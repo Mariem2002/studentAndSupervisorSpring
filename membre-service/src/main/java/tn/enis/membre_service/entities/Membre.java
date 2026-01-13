@@ -57,6 +57,7 @@ public abstract class Membre {
 	     DiscriminatorValue val = this.getClass().getAnnotation(DiscriminatorValue.class);
 	     return val != null ? val.value() : null;
 	 }
+	 
 
 	public Membre(String cin, String nom, String prenom, Date dateNaissance, String cv, String email, String password, Date dateInscription, String etablissement) {
 		this.cin = cin;

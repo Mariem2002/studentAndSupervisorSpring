@@ -30,7 +30,7 @@ public interface IMembreService {
 
 	// recherche spécifique des étudiants
 	public List<Etudiant> findByDiplome(String diplome);
-
+	
 	// recherche spécifique des enseignants
 	public List<EnseignantChercheur> findByGrade(String grade);
 
@@ -49,6 +49,17 @@ public interface IMembreService {
 	public void assignOrganisateurToEvenement(Long idOrganisateur, Long idEvnt);
 	
 	public List<EvenementBean> findEvenementsByOrganisateur(Long idEvnt);
+
+	public void unassignOrganisateurFromEvenement(Long id, Long idEvent);
+
+	public void unassignCreateurFromOutil(Long id, Long idOutil);
+
+	public void unassignAuteurFromPublication(Long id, Long idPub);
+
+	List<EnseignantChercheur> findAllEnseignants();
+
+
+
 	
 
 

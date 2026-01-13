@@ -48,25 +48,7 @@ public class MembreServiceApplication implements CommandLineRunner {
 		// TODO Auto-generated method stub
 		
 		
-		EnseignantChercheur ens = new EnseignantChercheur("14660104", "Lahami", "Mariem", new Date(89, 7, 2), "cv1", "mariem.lahami@enis.tn", "password126", new Date(120, 9, 14), "Professeur", "ENIS"); 
-		Etudiant etd = new Etudiant("14660102", "Ben Tamansourt", "Mariem", new Date(102, 7, 2), "cv2", "mariem.bentamansourt@enis.tn", "password123", new Date(125, 9, 14), "Cybersecurity", "Génie informatique", null, "ENIS"); 
-		membreRepository.save(ens); 
-		Etudiant etd2 = new Etudiant("14660103", "Zouari", "Nour", new Date(102, 8, 2), "cv3", "nour.zouari@enis.tn", "password127", new Date(125, 9, 14), "Cybersecurity", "Génie informatique", null, "ENIS"); 
-		membreRepository.save(etd); 
-		membreRepository.save(etd2); // Update a Member 
-		
-		Membre m1 = membreService.findByCin("14660102"); 
-		Membre m2 = membreService.findByCin("14660104"); 
-		
-		long idEtd1 = m1.getId(); 
-		long idEns1 = m2.getId(); 
-		membreService.assignEtudiantToEnseignant(idEtd1, idEns1);
-		
-		membreService.assignCreateurToOutil(idEns1, 1L);
-		
-		membreService.assignAuteurToPublication(idEns1, 1L);
-		
-		membreService.assignOrganisateurToEvenement(idEns1, 1L);
+	
 		
 		
 		

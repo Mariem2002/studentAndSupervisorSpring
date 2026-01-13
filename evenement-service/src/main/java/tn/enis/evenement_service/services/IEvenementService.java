@@ -15,4 +15,6 @@ public interface IEvenementService {
 	public Evenement findEvenement(Long id);
 
 	public List<Evenement> findAll();
+	
+	public void setOrganisateur(Long eventId, Long memberId);
 }

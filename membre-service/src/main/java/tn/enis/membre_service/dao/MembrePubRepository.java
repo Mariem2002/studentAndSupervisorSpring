@@ -12,4 +12,9 @@ import tn.enis.membre_service.entities.Membre_Publication;
 public interface MembrePubRepository extends JpaRepository<Membre_Publication, Membre_Pub_Id> {
 	@Query("select m from Membre_Publication m where m.id.auteur_id=:autId")
 	List<Membre_Publication> findpubId(@Param("autId") Long autId);
+
+	@Query("SELECT mp FROM Membre_Publication mp WHERE mp.id.publication_id = :pubId")
+    Membre_Publication findByPublicationId(@Param("pubId") Long pubId);
+
+
 }

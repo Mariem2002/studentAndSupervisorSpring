@@ -2,6 +2,7 @@ package tn.enis.membre_service.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import lombok.AllArgsConstructor;
 import tn.enis.membre_service.beans.EvenementBean;
@@ -57,6 +59,10 @@ public class MembreRestController {
 	@GetMapping(value = "/membres/search/cin")
 	public Membre findOneMemberByCin(@RequestParam String cin) {
 		Membre mbr = membreService.findByCin(cin);
+		
+		 if (mbr == null) {
+		        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Member not found");
+		    }
 		Long id = mbr.getId();
 		mbr.setPubs(membreService.findPublicationsByAuteur(id));
         mbr.setEvents(membreService.findEvenementsByOrganisateur(id));
@@ -66,18 +72,30 @@ public class MembreRestController {
 	@CrossOrigin
 	@GetMapping(value = "/membres/search/email")
 	public Membre findOneMemberByEmail(@RequestParam String email) {
-		Membre mbr = membreService.findByEmail(email);
-		Long id = mbr.getId();
-		mbr.setPubs(membreService.findPublicationsByAuteur(id));
-        mbr.setEvents(membreService.findEvenementsByOrganisateur(id));
-        mbr.setOutils(membreService.findOutilsByCreateur(id));
-        return mbr;
+	    Membre mbr = membreService.findByEmail(email);
+	    
+	    if (mbr == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Member not found");
+	    }
+	    
+	    Long id = mbr.getId();
+	    mbr.setPubs(membreService.findPublicationsByAuteur(id));
+	    mbr.setEvents(membreService.findEvenementsByOrganisateur(id));
+	    mbr.setOutils(membreService.findOutilsByCreateur(id));
+	    
+	    return mbr;
 	}
-	
+
 	@CrossOrigin
 	@PostMapping(value = "/membres/enseignant")
 	public Membre addMember(@RequestBody EnseignantChercheur ens) {
 		return membreService.addMember(ens);
+	}
+	
+	@CrossOrigin
+	@GetMapping(value = "/membres/enseignant")
+	public List<EnseignantChercheur> findEnseignants() {
+		return membreService.findAllEnseignants();
 	}
 	
 	@CrossOrigin
@@ -114,12 +132,20 @@ public class MembreRestController {
 	public void assignAuteurToPublication(@PathVariable Long id, @PathVariable Long idPub) {
 		membreService.assignAuteurToPublication(id, idPub);
 	}
+	@CrossOrigin
+	@DeleteMapping("/membres/{id}/publications/{idPub}")
+	public void unassignAuteurFromPublication(@PathVariable Long id, @PathVariable Long idPub) {
+		membreService.unassignAuteurFromPublication(id, idPub);}
 	
+		
 	@CrossOrigin
 	@GetMapping("/membres/{id}/publications")
 	public List<PublicationBean> findPublicationsByAuteur(@PathVariable Long id){
 		return membreService.findPublicationsByAuteur(id);
 	}
+	
+
+	
 	//////////// Outil ///////////////
 	
 	@CrossOrigin
@@ -129,11 +155,18 @@ public class MembreRestController {
 	}
 	
 	@CrossOrigin
+	@DeleteMapping("/membres/{id}/outils/{idOutil}")
+	public void unassignCreateurFromOutil(@PathVariable Long id, @PathVariable Long idOutil) {
+		membreService.unassignCreateurFromOutil(id, idOutil);
+	}
+	
+	@CrossOrigin
 	@GetMapping("/membres/{id}/outils")
 	public List<OutilBean> findOutilsByCreateur(@PathVariable Long id){
 		return membreService.findOutilsByCreateur(id);
 	}
 	
+
 	//////////// Evenement ///////////////
 	
 	@CrossOrigin
@@ -143,8 +176,16 @@ public class MembreRestController {
 	}
 	
 	@CrossOrigin
+	@DeleteMapping("/membres/{id}/evenements/{idEvent}")
+	public void unassignOrganisateurFromEvenement(@PathVariable Long id, @PathVariable Long idEvent) {
+		membreService.unassignOrganisateurFromEvenement(id, idEvent);
+	}
+	
+	@CrossOrigin
 	@GetMapping("/membres/{id}/evenements")
 	public List<EvenementBean> findEvenementsByOrganisateur(@PathVariable Long id){
 		return membreService.findEvenementsByOrganisateur(id);
 	}
+	
+
 }

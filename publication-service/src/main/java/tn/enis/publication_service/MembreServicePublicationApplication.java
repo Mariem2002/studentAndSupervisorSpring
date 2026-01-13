@@ -15,26 +15,12 @@ import tn.enis.publication_service.respository.IPublicationRepository;
 @SpringBootApplication
 @EnableDiscoveryClient 
 @AllArgsConstructor
-public class MembreServicePublicationApplication implements CommandLineRunner {
+public class MembreServicePublicationApplication {
 	IPublicationRepository publicationRepository;
 	RepositoryRestConfiguration configuration;
 	public static void main(String[] args) {
 		SpringApplication.run(MembreServicePublicationApplication.class, args);
 	}
 
-	public void run(String... args) throws Exception {
-		configuration.exposeIdsFor(Publication.class);
-	//Création des publications
-		Publication pubs1 =
-				Publication.builder()
-				.type("article")
-				.titre("an approach for testing soa systems")
-				.dateApparition(new Date())
-				.lien("lien")
-				.sourcePdf("pdf")
-				.build();
 	
-	publicationRepository.save(pubs1);
-
-	}
 }

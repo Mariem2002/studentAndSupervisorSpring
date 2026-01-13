@@ -15,26 +15,10 @@ import tn.enis.evenement_service.repository.IEvenementRepository;
 @SpringBootApplication 
 @EnableDiscoveryClient
 @AllArgsConstructor
-public class EvenementServiceApplication implements CommandLineRunner{
+public class EvenementServiceApplication{
 	IEvenementRepository evenementRepository;
 	RepositoryRestConfiguration configuration;
 	public static void main(String[] args) {
 		SpringApplication.run(EvenementServiceApplication.class, args);
 	}
-
-	@Override
-	public void run(String... args) throws Exception {
-		// TODO Auto-generated method stub
-		configuration.exposeIdsFor(Evenement.class);
-		Evenement evt1 =
-				Evenement.builder()
-				.titre("an approach for testing soa systems")
-				.dateEvenement(new Date())
-				.lieu("Tunis")
-				.build();
-		
-		evenementRepository.save(evt1);
-	}
-	
-
 }

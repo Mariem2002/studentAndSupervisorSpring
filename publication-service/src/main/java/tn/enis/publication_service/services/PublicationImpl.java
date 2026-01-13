@@ -2,7 +2,9 @@ package tn.enis.publication_service.services;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import lombok.AllArgsConstructor;
 import tn.enis.publication_service.entities.Publication;
@@ -20,7 +22,11 @@ public class PublicationImpl implements IPublicationService{
 
 	
 	public void deletePublication(Long id) {
-		// TODO Auto-generated method stub
+		  if (!publicationRepository.existsById(id)) {
+	            throw new ResponseStatusException(
+	                HttpStatus.NOT_FOUND, "Publication not found"
+	            );
+	        }
 		publicationRepository.deleteById(id);
 	}
 

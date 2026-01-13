@@ -20,7 +20,11 @@ public class Outil {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NonNull
+	private String titre;
+	@NonNull
 	private Date dateCreation;
 	@NonNull
 	private String source;
+	@NonNull
+	private Long idCreateur;
 }

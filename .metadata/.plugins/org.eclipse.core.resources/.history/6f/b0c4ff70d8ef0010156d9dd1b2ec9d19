@@ -1,0 +1,60 @@
+package tn.enis.evenement_service.services;
+
+import java.util.List;
+
+import org.apache.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import lombok.AllArgsConstructor;
+import tn.enis.evenement_service.entities.Evenement;
+import tn.enis.evenement_service.repository.IEvenementRepository;
+
+
+@Service
+@AllArgsConstructor
+public class EvenementImpl implements IEvenementService{
+	private final IEvenementRepository evenementRepository;
+
+	public Evenement addEvenement(Evenement m) {
+		// TODO Auto-generated method stub
+		return evenementRepository.save(m);
+	}
+
+	
+	public void deleteEvenement(Long id) {
+		// TODO Auto-generated method stub
+		evenementRepository.deleteById(id);
+	}
+
+	
+	public Evenement updateEvenement(Evenement p) {
+		// TODO Auto-generated method stub
+		return evenementRepository.saveAndFlush(p);
+	}
+
+	
+	public Evenement findEvenementById(Long eventId) {
+	    return evenementRepository.findById(eventId)
+	        .orElseThrow(() -> new ResponseStatusException(
+	            HttpStatus.NOT_FOUND, "Evenement not found"
+	        ));
+	}
+
+
+	
+	public List<Evenement> findAll() {
+		// TODO Auto-generated method stub
+		return evenementRepository.findAll();
+	}
+	
+	
+	public void setOrganisateur(Long eventId, Long memberId) {
+
+	    Evenement event = evenementRepository.findById(eventId)
+	        .orElseThrow(() -> new RuntimeException("Event not found"));
+
+	    // Only store the member ID (or proxy reference)
+	    event.setIdOrganisateur(memberId);
+	}
+
+
+}

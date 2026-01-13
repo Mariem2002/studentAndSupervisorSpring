@@ -34,6 +34,8 @@ public class OutilRestController {
     public Outil findOneOutilById(@PathVariable Long id) {
         return outilService.findOutil(id);
     }
+    
+    
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/outils")

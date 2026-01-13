@@ -2,13 +2,17 @@ package tn.enis.membre_service.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import tn.enis.membre_service.beans.EvenementBean;
 import tn.enis.membre_service.beans.OutilBean;
 import tn.enis.membre_service.beans.PublicationBean;
+import tn.enis.membre_service.dao.EnseignantChercheurRepository;
 import tn.enis.membre_service.dao.MembreEvntRepository;
 import tn.enis.membre_service.dao.MembreOutilRepository;
 import tn.enis.membre_service.dao.MembrePubRepository;
@@ -36,6 +40,7 @@ public class MembreImpl implements IMembreService {
 	PublicationProxyService publicationProxyService;
 	OutilProxyService outilProxyService;
 	EvenementProxyService evenementProxyService;
+	EnseignantChercheurRepository enseignantChercheurRepository;
 	@Override
 	public Membre addMember(Membre m) {
 		// TODO Auto-generated method stub
@@ -108,7 +113,6 @@ public class MembreImpl implements IMembreService {
 		Etudiant etd1 = (Etudiant) membreRepository.findById(idEtud).get();
 		EnseignantChercheur ens1 = (EnseignantChercheur) membreRepository.findById(idEns).get();
 		etd1.setEncadrant(ens1);
-		membreRepository.saveAndFlush(etd1);
 	}
 
 	public void assignAuteurToPublication(Long idAuteur, Long idPub) {
@@ -119,16 +123,28 @@ public class MembreImpl implements IMembreService {
 		membrePubRepository.save(mbs);
 	}
 
+	@Override
 	public List<PublicationBean> findPublicationsByAuteur(Long idAuteur) {
-		List<PublicationBean> pubs = new ArrayList<PublicationBean>();
-		List<Membre_Publication> idpubs = membrePubRepository.findpubId(idAuteur);
-		idpubs.forEach(s -> {
-			System.out.println(s);
-			pubs.add(publicationProxyService.findPublicationById(s.getId().getPublication_id()));
-		});
-		return pubs;
+	    List<PublicationBean> publications = new ArrayList<>();
+	    List<Membre_Publication> idpublications = membrePubRepository.findpubId(idAuteur);
+
+	    idpublications.forEach(s -> {
+	        Long publicationId = s.getId().getPublication_id();
+	        try {
+	        	PublicationBean publication = publicationProxyService.findPublicationById(publicationId);
+	        	publications.add(publication);
+	        } catch (feign.FeignException.NotFound e) {
+	            // Publication missing, skip it
+	            System.out.println("Publication with ID " + publicationId + " not found, skipping.");
+	        }
+	    });
+
+	    return publications;
 	}
 
+
+
+	
 	@Override
 	public void assignCreateurToOutil(Long idCreateur, Long idOutil) {
 		// TODO Auto-generated method stub
@@ -139,19 +155,31 @@ public class MembreImpl implements IMembreService {
 		membreOutilRepository.save(mbs);
 		
 	}
+	
+	
+
+
 
 	@Override
 	public List<OutilBean> findOutilsByCreateur(Long idCreateur) {
-		List<OutilBean> outils = new ArrayList<OutilBean>();
-		List<Membre_Outil> idoutils = membreOutilRepository.findoutilId(idCreateur);
-		idoutils.forEach(s -> {
-			System.out.println(s);
-			outils.add(outilProxyService.findOutilById(s.getId().getOutilId()));
-		});
-		if (idoutils.isEmpty()) System.out.println("No tools found for createur " + idCreateur);
-		return outils;
+	    List<OutilBean> outils = new ArrayList<>();
+	    List<Membre_Outil> idoutils = membreOutilRepository.findoutilId(idCreateur);
+
+	    idoutils.forEach(s -> {
+	        Long outilId = s.getId().getOutilId();
+	        try {
+	        	OutilBean outil = outilProxyService.findOutilById(outilId);
+	            outils.add(outil);
+	        } catch (feign.FeignException.NotFound e) {
+	            // Outil missing, skip it
+	            System.out.println("Outil with ID " + outilId + " not found, skipping.");
+	        }
+	    });
+
+	    return outils;
 	}
 
+	
 	@Override
 	public void assignOrganisateurToEvenement(Long idOrganisateur, Long idEvnt) {
 		// TODO Auto-generated method stub
@@ -164,15 +192,84 @@ public class MembreImpl implements IMembreService {
 
 	@Override
 	public List<EvenementBean> findEvenementsByOrganisateur(Long idOrganisateur) {
-		List<EvenementBean> events = new ArrayList<EvenementBean>();
-		List<Membre_Evenement> idevents = membreEvntRepository.findevenementId(idOrganisateur);
-		idevents.forEach(s -> {
-			System.out.println(s);
-			events.add(evenementProxyService.findEvenementById(s.getId().getEvenement_id()));
-		});
-		return events;
+	    List<EvenementBean> events = new ArrayList<>();
+	    List<Membre_Evenement> idevents = membreEvntRepository.findevenementId(idOrganisateur);
+
+	    idevents.forEach(s -> {
+	        Long eventId = s.getId().getEvenementId();
+	        try {
+	            EvenementBean event = evenementProxyService.findEvenementById(eventId);
+	            events.add(event);
+	        } catch (feign.FeignException.NotFound e) {
+	            // Event missing, skip it
+	            System.out.println("Event with ID " + eventId + " not found, skipping.");
+	        }
+	    });
+
+	    return events;
+	}
+
+	@Override
+	public void unassignOrganisateurFromEvenement(Long idOrganisateur, Long idEvent) {
+	    Membre_Evnt_Id key = new Membre_Evnt_Id();
+	    key.setOrganisateurId(idOrganisateur);
+	    key.setEvenementId(idEvent);
+
+	    if(membreEvntRepository.existsById(key)) {
+	        membreEvntRepository.deleteById(key);
+	        System.out.println("Organisateur unassigned from event " + idEvent);
+	    } else {
+	        System.out.println("No link found for organisateur " + idOrganisateur + " and event " + idEvent);
+	    }
+	}
+
+
+	@Override
+	public void unassignAuteurFromPublication(Long idAuteur, Long idPub) {
+	    Membre_Pub_Id key = new Membre_Pub_Id();
+	    key.setAuteur_id(idAuteur);
+	    key.setPublication_id(idPub);
+
+	    if(membrePubRepository.existsById(key)) {
+	        membrePubRepository.deleteById(key);
+	        System.out.println("Auteur unassigned from publication " + idPub);
+	    } else {
+	        System.out.println("No link found for auteur " + idAuteur + " and publication " + idPub);
+	    }
+	}
+	
+	@Override
+	public void unassignCreateurFromOutil(Long idCreateur, Long idOutil) {
+	    Membre_Outil_Id key = new Membre_Outil_Id();
+	    key.setCreateurId(idCreateur);
+	    key.setOutilId(idOutil);
+
+	    if (membreOutilRepository.existsById(key)) {
+	        membreOutilRepository.deleteById(key);
+	        System.out.println("Createur unassigned from outil " + idOutil);
+	    } else {
+	        System.out.println("No link found for createur " + idCreateur + " and outil " + idOutil);
+	    }
+	}
+
+	@Override
+	public List<EnseignantChercheur> findAllEnseignants() {
+		return enseignantChercheurRepository.findAll();
 	}
 
 
 
+
+
+	
+
+	
+	
 }
+
+
+
+
+
+
+

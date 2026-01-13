@@ -27,4 +27,6 @@ public class Evenement {
 	private Date dateEvenement;
 	@NonNull
 	private String lieu;
+	@NonNull
+	private long idOrganisateur;
 }

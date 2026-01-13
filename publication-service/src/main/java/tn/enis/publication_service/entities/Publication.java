@@ -39,4 +39,6 @@ public class Publication {
 	private String lien;
 	@NonNull
 	private String sourcePdf;
+	@NonNull
+	private Long idAuteur;
 }

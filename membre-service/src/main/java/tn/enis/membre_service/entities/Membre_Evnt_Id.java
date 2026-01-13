@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @Data @AllArgsConstructor @NoArgsConstructor
 public class Membre_Evnt_Id implements Serializable{
-	private Long evenement_id;
-	private Long organisateur_id;
+	private Long evenementId;
+	private Long organisateurId;
 }

@@ -2,6 +2,7 @@ package tn.enis.evenement_service.controllers;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +36,15 @@ public class EvenementRestController {
     @GetMapping("/evenements/{id}")
     public Evenement findOneEvenementById(@PathVariable Long id) {
         return evenementService.findEvenement(id);
+    }
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/evenements/{eventId}/organisateur/{memberId}")
+    public ResponseEntity<Void> assignOrganisateur(
+            @PathVariable Long eventId,
+            @PathVariable Long memberId) {
+
+        evenementService.setOrganisateur(eventId, memberId);
+        return ResponseEntity.ok().build();
     }
 
     @CrossOrigin(origins = "http://localhost:4200")

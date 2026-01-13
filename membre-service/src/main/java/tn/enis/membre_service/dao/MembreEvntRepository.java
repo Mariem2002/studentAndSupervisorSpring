@@ -1,6 +1,7 @@
 package tn.enis.membre_service.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,10 +9,17 @@ import org.springframework.data.jpa.repository.Query;
 import feign.Param;
 import tn.enis.membre_service.entities.Membre_Evenement;
 import tn.enis.membre_service.entities.Membre_Evnt_Id;
+import tn.enis.membre_service.entities.Membre_Outil;
 
 
 public interface MembreEvntRepository extends JpaRepository<Membre_Evenement, Membre_Evnt_Id> {
-	@Query("select m from Membre_Evenement m where m.id.organisateur_id=:organId")
+	@Query("select m from Membre_Evenement m where m.id.organisateurId=:organId")
 	List<Membre_Evenement> findevenementId(@Param("organId") Long organId);
+
+	
+	
+	@Query("SELECT me FROM Membre_Evenement me WHERE me.id.evenementId = :eventId")
+    Membre_Evenement findByEventId(@Param("eventId") Long eventId);
+
 
 }

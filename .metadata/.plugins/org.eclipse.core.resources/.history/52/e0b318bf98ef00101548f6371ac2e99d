@@ -1,0 +1,19 @@
+package tn.enis.membre_service.dao;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import feign.Param;
+import tn.enis.membre_service.entities.Membre_Pub_Id;
+import tn.enis.membre_service.entities.Membre_Publication;
+
+public interface MembrePubRepository extends JpaRepository<Membre_Publication, Membre_Pub_Id> {
+	@Query("select m from Membre_Publication m where m.id.auteur_id=:autId")
+	List<Membre_Publication> findpubId(@Param("autId") Long autId);
+
+	Membre_Publication findById_Publication_id(Long publicationId);
+
+
+}
